@@ -26,6 +26,7 @@ class DataSpider(object):
 
     def GetLink(self, url):  # 爬取网页并返回其文本内容
         try:
+            self.link=[]
             req_link = self.s.get(url)
             req_link.encoding = req_link.apparent_encoding
             text1 = req_link.text
@@ -92,13 +93,13 @@ class DataSpider(object):
 
 
 if __name__ == '__main__':
-    COUNT = 100
+    COUNT = 400
     DELAY = 30
 
     spider = DataSpider()
 
     for i in range(COUNT):  # 爬取、抓取网页前500页的有效信息
-        if i % 20 == 0 and i > 0:  # 每爬取50页sleep30s防止被识别
+        if i % 30 == 0 and i > 0:  # 每爬取50页sleep30s防止被识别
             time.sleep(DELAY)
         url = r'https://sh.lianjia.com/chengjiao/pg{:d}ng1nb1/'.format(i + 1)
         link = spider.GetLink(url)
@@ -112,7 +113,7 @@ if __name__ == '__main__':
             spider.GetAge(text)
             spider.GetDecorate(text)
             spider.GetLoc(text)
-    link = spider.link
+
     unitprice = spider.unitprice
     structure = spider.structure
     storey = spider.storey
