@@ -13,10 +13,12 @@ class DataSpider(object):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}
         self.s = requests.Session()
         self.s.headers.update(self.headers)
-        self.cx = sqlite3.connect('data.db')
-        self.cu = self.cx.cursor()
-        # self.cu.execute('''create table data
-        # (unit_price,structure,storey,size,age,decorate,loc,xp,yp)''')
+        self.conn = sqlite3.connect('data.db')
+        self.cu = self.conn.cursor()
+        self.cu.execute('''create table if not exists data
+            (unit_price,structure,storey,size,age,decorate,loc,xp,yp)''')
+
+
 
     def GetLink(self, url):  # 爬取网页并返回其文本内容
         try:
@@ -79,14 +81,14 @@ class DataSpider(object):
 
     def SaveData(self,data):
         self.cu.execute('insert into data values(?,?,?,?,?,?,?,?,?)', data)
-        self.cx.commit()
+        self.conn.commit()
 
 
 if __name__ == '__main__':
-    COUNT = 300
+    COUNT = 350
     DELAY = 30
     spider = DataSpider()
-    for i in range(4,COUNT):  # 爬取、抓取网页前300页的有效信息
+    for i in range(271,COUNT):  # 爬取、抓取网页前350页的有效信息
         if i % 20 == 0 and i > 0:  # 每爬取20页sleep30s防止被识别
             time.sleep(DELAY)
         url = r'https://sh.lianjia.com/chengjiao/pg{:d}ng1nb1/'.format(i + 1)
@@ -104,5 +106,5 @@ if __name__ == '__main__':
             xp,yp=spider.GetXY(loc)
             data=[unit_price,structure,storey,size,age,decorate,loc,xp,yp]
             spider.SaveData(data)
-    cx=spider.cx
-    cx.close()
+    conn=spider.conn
+    conn.close()
