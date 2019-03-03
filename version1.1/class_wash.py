@@ -1,9 +1,11 @@
 import sqlite3
+import math
 import numpy as np
 import pandas as pd
+from sklearn.cluster import KMeans
 
 
-class wash(object):
+class Wash(object):
     def __init__(self):
         self.df = None
 
@@ -14,12 +16,14 @@ class wash(object):
         d = cu.fetchall()
         self.df = pd.DataFrame(d,
                                columns=['unit_price', 'structure', 'storey', 'size', 'age', 'decorate', 'loc', 'xp','yp'])
-        self.df.drop_duplicates(['unit_price', 'structure', 'storey', 'size'])
         self.df.to_excel('RawData.xls')
         return self.df
 
     def UnitPriceWash(self):
         unit_price = np.array(self.df['unit_price'], dtype=float)
+        # means=np.mean(unit_price)
+        # var=np.var(unit_price)
+        # unit_price=(unit_price-means)/var
         self.df['unit_price'] = unit_price
         return self.df
 
@@ -53,16 +57,23 @@ class wash(object):
 
     def SizeWash(self):
         size = np.array(self.df['size'], dtype=float)
+        # mean=np.mean(size)
+        # var=np.var(size)
+        # size=(size-mean)/var
         self.df['size'] = size
         return self.df
 
     def AgeWash(self):
         self.df = self.df.replace(['未知 '], [np.nan])
         self.df['age'] = 2019 - np.array(self.df['age'], dtype=float)
+        self.df = self.df.replace([-1], [np.mean(self.df['age'])])
+        # means=np.mean(self.df['age'])
+        # var=np.var(self.df['age'])
+        # self.df['age']=(self.df['age']-means)/var
         return self.df
 
     def DecorateWash(self):
-        self.df = self.df.replace(list(set(self.df['decorate'])), [0, 1, -1, 2])
+        self.df = self.df.replace(['毛坯     ', '精装     ', None, '简装     ', '其他     '], [0, 2, -1, 1,-1])
         return self.df
 
     def XYWash(self):
@@ -70,8 +81,47 @@ class wash(object):
         self.df['yp'] = np.array(self.df['yp'], dtype=float)
         return self.df
 
+    def Select(self):
+        self.df = self.df[self.df['unit_price'].between(10000,110000)]
+        self.df = self.df[self.df['age'].between(0,40)]
+        self.df = self.df[self.df['size'] < 200]
+        self.df = self.df[self.df['xp'] > 120]
+        self.df = self.df[self.df['yp'] > 30]
+
+        return self.df
+
+    def Norm(self,columns):
+        means=np.mean(self.df[columns])
+        var=np.var(self.df[columns])
+        self.df[columns]=(self.df[columns]-means)/var
+        max=np.max(self.df[columns])
+        min=np.min(self.df[columns])
+        self.df[columns]=(self.df[columns]-min)/(max-min)
+        return self.df
+
+    def GetDistance(self,n):
+        data = self.df[['xp', 'yp', 'unit_price']]
+        k = KMeans(n_clusters=n).fit_predict(data[['xp', 'yp']], data['unit_price'])
+        data['label'] = k
+        xc, yc = [], []
+        for i in range(n):
+            d = data[data['label'] == i]
+            xe = sum(d['xp'] * d['unit_price']) / sum(d['unit_price'])
+            ye = sum(d['yp'] * d['unit_price']) / sum(d['unit_price'])
+            xc.append(xe)
+            yc.append(ye)
+        distance=np.zeros_like(data['xp'])
+        for x, y in zip(xc, yc):
+            dx = np.array(data['xp'] - x,dtype=float)
+            dy = np.array(data['yp'] - y,dtype=float)
+            distance+=np.hypot(96*dx,57*dy)
+        print(distance)
+        self.df['distance']=distance
+        return self.df
+
+
 if __name__ == '__main__':
-    w = wash()
+    w = Wash()
     w.GetData('data.db')
     w.UnitPriceWash()
     w.StructureWash()
@@ -80,5 +130,11 @@ if __name__ == '__main__':
     w.AgeWash()
     w.DecorateWash()
     w.XYWash()
+    w.Select()
+    for i in ['age','unit_price','size']:
+        w.Norm(i)
+    w.GetDistance(2)
+    w.Norm('distance')
     dataframe=w.df
+    dataframe=dataframe.drop_duplicates(['unit_price', 'structure', 'storey', 'size'])
     dataframe.to_excel('WashedData.xls')

@@ -85,10 +85,10 @@ class DataSpider(object):
 
 
 if __name__ == '__main__':
-    COUNT = 350
+    COUNT = 300
     DELAY = 30
     spider = DataSpider()
-    for i in range(271,COUNT):  # 爬取、抓取网页前350页的有效信息
+    for i in range(COUNT):  # 爬取、抓取网页前300页的有效信息
         if i % 20 == 0 and i > 0:  # 每爬取20页sleep30s防止被识别
             time.sleep(DELAY)
         url = r'https://sh.lianjia.com/chengjiao/pg{:d}ng1nb1/'.format(i + 1)
