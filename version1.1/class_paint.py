@@ -14,7 +14,6 @@ class Paint(object):
     def jointplot(self, x, y,save=True):
         sns.set(style="darkgrid")
         p = np.corrcoef(list(self.data.loc[:, x]), self.data.loc[:, y])
-
         pc = sns.jointplot(x=x, y=y, data=self.data.loc[:, [x, y]], kind='reg', color='g')
         name='joint relation between {0:s} and {1:s}'.format(y.capitalize(), x.capitalize())
         plt.suptitle(name)
@@ -25,6 +24,7 @@ class Paint(object):
 
     def histo(self, s,bins=20,save=True):  # 绘制单个变量的直方图
         df = self.data[s]
+        sns.set(style="darkgrid")
         pc = sns.distplot(df, kde=True,bins=bins)
         name='the Histograme of {:s}'.format(s.capitalize())
         plt.suptitle(name)
@@ -56,7 +56,7 @@ class Paint(object):
 
     def xyplot(self,save=True):
         plt.figure(figsize=(10, 10))
-        sns.set(font=self.zh.get_name(),font_scale=0.7)
+        sns.set(font=self.zh.get_name(),font_scale=0.8)
         sns.scatterplot(x=self.data['xp'], y=self.data['yp'], \
                              hue=self.data['unit_price'], s=70, palette="hot")
         referance = {'南京西路': [121.457901, 31.23881328496342],
@@ -90,14 +90,12 @@ class Paint(object):
 
 if __name__ == '__main__':
     p = Paint()
-    # p.jointplot('age','unit_price')
-    # plt.show()
     # p.histo('size')
     # plt.show()
-    # p.jointplot('distance','unit_price')
-    # plt.show()
-    pc=p.box('decorate','unit_price')
+    p.jointplot('unit_price','decorate')
     plt.show()
+    # pc=p.box('lavatory_num','bedroom_num')
+    # plt.show()
     # p.heat()
     # plt.show()
     # p.xyplot()
