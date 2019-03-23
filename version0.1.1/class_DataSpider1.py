@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 import time
 
-
 class DataSpider1(object):
     def __init__(self):
         self.headers = {
@@ -25,23 +24,19 @@ class DataSpider1(object):
             print('爬取异常')
             return
 
-    def FindLocSize(self, text):  # 通过正则表达式抓取房屋位置和面积信息
+    def GetLocSize(self, text):  # 通过正则表达式抓取房屋位置和面积信息
         div = text.find_all(name='div', attrs={'class': 'houseInfo'})
-        ...  # 拆分
         loc = [re.findall(r'target="_blank">(.*?)</a>', str(x))[0] for x in div]
-        ...  # 拆分
         size = [x.split('|')[-1] for x in [re.findall(r'厅|(\d\d.*?)平', str(x))[0] for x in div]]
         return loc, size
 
-    def FindAge(self, text):  # 通过正则表达式抓取房龄信息
+    def GetAge(self, text):  # 通过正则表达式抓取房龄信息
         div = text.find_all(name='div', attrs={'class': 'positionInfo'})
-        ...  # 拆分
         age = [re.findall(r'(\d+?)年', str(x))[0] if re.findall(r'(\d+?)年', str(x)) else np.nan for x in div]
         return age
 
-    def FindPrice(self, text):  # 通过正则表达式抓取房屋单价信息
+    def GetPrice(self, text):  # 通过正则表达式抓取房屋单价信息
         div = text.find_all(name='div', attrs={'class': 'unitPrice'})
-        ...  # 拆分
         price = [re.findall(r'data-price="(\d+?)"', str(x))[0] for x in div]
         return price
 
@@ -71,9 +66,9 @@ def save1():
     for i in range(COUNT):  # 爬取、抓取网页前500页的有效信息
         url = 'https://sh.lianjia.com/ershoufang/pg' + '{0:d}/'.format(i + 1)
         raw = spider.GetHtmlText(url)
-        loc, size = spider.FindLocSize(raw)
-        age = spider.FindAge(raw)
-        price = spider.FindPrice(raw)
+        loc, size = spider.GetLocSize(raw)
+        age = spider.GetAge(raw)
+        price = spider.GetPrice(raw)
 
         houseloc.extend(loc)
         housesize.extend(size)

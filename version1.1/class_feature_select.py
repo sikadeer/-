@@ -25,6 +25,7 @@ class FeatureSelect(object):
 
     def NewData(self):
         self.feature = self.data[['unit_price','distance','age','decorate','b_l']]
+        self.feature.to_excel('FinalData.xls')
         return self.feature
 
     def HeatPlot(self,data,save=True):
@@ -46,20 +47,3 @@ if __name__ == '__main__':
     f.SelectBedroom_Lavatory()
     data=f.NewData()
     f.HeatPlot(data)
-
-        
-    
-
-
-# data.drop(['xp', 'yp'], axis=1,inplace=True)
-
-
-
-
-# d1=data[data['distance']<0.017]
-# d2=data[data['distance'].between(0.017,0.069)]
-# d3=data[data['distance'].between(0.069,0.180)]
-# d4=data[data['distance']>0.180]
-# for i in [d1,d2,d3,d4]:
-#     p = np.corrcoef(list(i.loc[:, 'unit_price']), i.loc[:, 'kitchen_num'])
-#     print(p)

@@ -6,8 +6,9 @@ from scipy.stats import norm
 
 class WholePainting(object):
     def __init__(self):
-        self.da=pd.read_excel('data.xls').drop(['Unnamed: 0','houseloc','north_latitude','east_longitude'],axis=1)
+        self.data=pd.read_excel('WashedData.xls')
     def pairplot(self):#绘制四个变量的矩阵图
+        data=self.data
         sns.set_style('darkgrid')
         pc=sns.pairplot(np.exp(self.da),diag_kind='kde',plot_kws={'alpha':0.05},dropna=True)
         plt.suptitle('joint plot of the houseage,the housesize,the unitprice and the distance from the downtown')

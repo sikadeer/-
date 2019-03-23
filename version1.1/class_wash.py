@@ -92,7 +92,7 @@ class Wash(object):
 
     def Norm(self,columns):
         means=np.mean(self.df[columns])
-        var=np.var(self.df[columns])
+        var=np.std(self.df[columns])
         self.df[columns]=(self.df[columns]-means)/var
         max=np.max(self.df[columns])
         min=np.min(self.df[columns])
@@ -115,7 +115,6 @@ class Wash(object):
             dx = np.array(data['xp'] - x,dtype=float)
             dy = np.array(data['yp'] - y,dtype=float)
             distance+=np.hypot(96*dx,57*dy)
-        print(distance)
         self.df['distance']=distance
         return self.df
 

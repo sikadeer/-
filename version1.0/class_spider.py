@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import re
 import pandas as pd
 import numpy as np
+import sqlite3
 import time
 
 
@@ -87,19 +88,20 @@ class DataSpider(object):
             x= re.findall(r'"pointx":"?(.*?)"?,', text)
             y= re.findall(r'"pointy":"?(.*?)"?,', text)
             print('正在获取第{0:d}/{1:d}条数据…………'.format(loc.index(i)+1,len(loc)))
-            self.xp.append(x[1] if x else np.nan)
-            self.yp.append(y[1] if y else np.nan)
+            self.xp.append(x[1] if len(x)>1 else np.nan)
+            self.yp.append(y[1] if len(y)>1 else np.nan)
         return self.xp,self.yp
 
 
 if __name__ == '__main__':
-    COUNT = 400
+    COUNT = 30
     DELAY = 30
+
 
     spider = DataSpider()
 
-    for i in range(COUNT):  # 爬取、抓取网页前500页的有效信息
-        if i % 30 == 0 and i > 0:  # 每爬取50页sleep30s防止被识别
+    for i in range(120,150):  # 爬取、抓取网页前500页的有效信息
+        if i % 10 == 0 and i > 0:  # 每爬取50页sleep30s防止被识别
             time.sleep(DELAY)
         url = r'https://sh.lianjia.com/chengjiao/pg{:d}ng1nb1/'.format(i + 1)
         link = spider.GetLink(url)
@@ -126,8 +128,8 @@ if __name__ == '__main__':
     yp=spider.yp
 
     datafram = pd.DataFrame(np.array([unitprice,structure,storey,size,age,decorate,loc,xp,yp]))
-    datafram.to_csv('data1.csv')
-    d = pd.read_csv('data1.csv')
+    datafram.to_csv('data1.150.csv')
+    d = pd.read_csv('data1.150.csv')
     d=d.drop('Unnamed: 0', axis=1)
     d.index =['unitprice','structure','storey','size','age','decorate','loc','xp','yp']
-    d.T.to_excel('data1.xls')
+    d.T.to_excel('data1.150.xls')
