@@ -33,7 +33,7 @@ class FeatureSelect(object):
         self.feature.to_excel('FinalData.xls')
         return self.feature
 
-    def HeatPlot(self,data,save=True):
+    def HeatPlot(self,data,save=False):
         data = data.corr()
         sns.set(font_scale=0.8)
         plt.subplots(figsize=(8, 8))

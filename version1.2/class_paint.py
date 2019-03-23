@@ -10,7 +10,7 @@ from scipy import stats
 class Paint(object):
     def __init__(self):
         self.data = None
-        self.zh = matplotlib.font_manager.FontProperties(fname=r'C:\Windows\Fonts\simkai.ttf')
+        self.zh = matplotlib.font_manager.FontProperties(fname=r'./simkai.ttf')
 
     def GetDataFromExcel(self,filename):
         self.data=pd.read_excel(filename)

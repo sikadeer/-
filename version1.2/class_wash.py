@@ -75,14 +75,14 @@ class Wash(object):
     def XYWash(self):
         self.df['xp'] = np.array(self.df['xp'], dtype=float)
         self.df['yp'] = np.array(self.df['yp'], dtype=float)
+        self.df = self.df[self.df['xp'] > 120]
+        self.df = self.df[self.df['yp'] > 30]
         return self.df
 
     def Select(self):
         self.df = self.df[self.df['unit_price'].between(10000,120000)]
         self.df = self.df[self.df['age'].between(0,40)]
         self.df = self.df[self.df['size'].between(20, 200)]
-        self.df = self.df[self.df['xp'] > 120]
-        self.df = self.df[self.df['yp'] > 30]
         return self.df
 
     def MaxMinNorm(self,columns):
