@@ -105,9 +105,8 @@ class Wash(object):
         max=np.max(self.df['ZscoreNorm'+columns])
         min=np.min(self.df['ZscoreNorm'+columns])
         self.df['ZscoreNorm'+columns]=(self.df['ZscoreNorm'+columns]-min)/(max-min)
-        return self.df
 
-    def GetDistance(self,n):
+    def GetDistance(self, n):
         data = self.df[['xp', 'yp', 'unit_price']]
         k = KMeans(n_clusters=n).fit_predict(data[['xp', 'yp']], data['unit_price'])
         data['label'] = k
@@ -118,12 +117,12 @@ class Wash(object):
             ye = sum(d['yp'] * d['unit_price']) / sum(d['unit_price'])
             xc.append(xe)
             yc.append(ye)
-        distance=np.zeros_like(data['xp'])
+        distance = np.zeros_like(data['xp'])
         for x, y in zip(xc, yc):
-            dx = np.array(data['xp'] - x,dtype=float)
-            dy = np.array(data['yp'] - y,dtype=float)
-            distance+=np.hypot(96*dx,57*dy)
-        self.df['distance']=distance
+            dx = np.array(data['xp'] - x, dtype=float)
+            dy = np.array(data['yp'] - y, dtype=float)
+            distance += np.hypot(96 * dx, 57 * dy)
+        self.df['distance'] = distance
         return self.df
 
 

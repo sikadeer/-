@@ -122,18 +122,5 @@ class Wash(object):
 if __name__ == '__main__':
     w = Wash()
     w.GetData('data.db')
-    w.UnitPriceWash()
-    w.StructureWash()
-    w.StoreyWash()
-    w.SizeWash()
-    w.AgeWash()
-    w.DecorateWash()
-    w.XYWash()
-    w.Select()
-    for i in ['age','unit_price','size']:
-        w.Norm(i)
-    w.GetDistance(2)
-    w.Norm('distance')
-    dataframe=w.df
-    dataframe=dataframe.drop_duplicates(['unit_price', 'structure', 'storey', 'size'])
-    dataframe.to_excel('WashedData.xls')
+    df=w.df
+    print(df)

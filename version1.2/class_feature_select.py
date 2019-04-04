@@ -28,8 +28,8 @@ class FeatureSelect(object):
         self.data['b_l']=np.around(self.data['b_l'], decimals=2)
         return self.data
 
-    def NewData(self):
-        self.feature = self.data[['unit_price','distance','age','decorate','b_l']]
+    def NewData(self,data):
+        self.feature = data[['unit_price','distance','age','decorate','b_l']]
         self.feature.to_excel('FinalData.xls')
         return self.feature
 
@@ -43,4 +43,3 @@ class FeatureSelect(object):
         if save:
             plt.savefig(name)
         return pc
-

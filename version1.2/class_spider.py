@@ -91,29 +91,3 @@ class DataSpider(object):
     def SaveData(self,data):
         self.cu.execute('insert into data values(?,?,?,?,?,?,?,?,?)', data)
         self.conn.commit()
-
-
-if __name__ == '__main__':
-    COUNT = 300
-    DELAY = 30
-    spider = DataSpider()
-    for i in range(COUNT):  # 爬取、抓取网页前300页的有效信息
-        if i % 20 == 0 and i > 0:  # 每爬取20页sleep30s防止被识别
-            time.sleep(DELAY)
-        url = r'https://sh.lianjia.com/chengjiao/pg{:d}ng1nb1/'.format(i + 1)
-        link = spider.GetLink(url)
-        for j in link:
-            print('正在获取第{0:d}页第{1:d}条数据…………'.format(i+1,link.index(j)+1))
-            text = spider.GetHtmlText(j)
-            unit_price=spider.Getunit_price(text)
-            structure=spider.GetStructure(text)
-            storey=spider.GetStorey(text)
-            size=spider.GetSize(text)
-            age=spider.GetAge(text)
-            decorate=spider.GetDecorate(text)
-            loc=spider.GetLoc(text)
-            xp,yp=spider.GetXY(loc)
-            data=[unit_price,structure,storey,size,age,decorate,loc,xp,yp]
-            spider.SaveData(data)
-    conn=spider.conn
-    conn.close()
